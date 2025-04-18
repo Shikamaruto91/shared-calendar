@@ -12,9 +12,9 @@ body {
 }
 
 .container {
-    max-width: 100%;
+    max-width: 800px;
     margin: 0 auto;
-    padding: 10px;
+    padding: 15px;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -46,45 +46,75 @@ input {
     background-color: #f8f8f8;
 }
 
-input:nth-of-type(3) {
-    background-color: #e8f5e9;  /* Verde molto chiaro */
-    border-color: #81c784;      /* Bordo verde più scuro */
-}
-
 button {
     background-color: #4CAF50;
     color: white;
     border: none;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
 }
 
 button:hover {
     background-color: #45a049;
+    transform: translateY(-1px);
 }
 
 #calendar {
-    width: 100%;
-    overflow-x: auto;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
     margin-top: 20px;
 }
 
 #shifts {
-    margin-bottom: 20px;
+    margin: 20px 0;
 }
 
 .calendar-day {
     border: 1px solid #ddd;
-    padding: 10px;
-    margin: 5px;
+    padding: 8px;
     text-align: center;
     background-color: white;
     border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.calendar-day:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-1px);
 }
 
 .selected {
     background-color: #4CAF50;
     color: white;
+    border-color: #45a049;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.saved-data {
+    background-color: #e8f5e9;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 4px;
+    border-left: 4px solid #4CAF50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    color: #666;
+    padding: 0 5px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    width: auto;
+}
+
+.delete-btn:hover {
+    color: #d32f2f;
 }
 
 #login-message {
@@ -93,10 +123,9 @@ button:hover {
     text-align: center;
 }
 
-/* Stile per schermi più piccoli (mobile) */
 @media screen and (max-width: 600px) {
     .container {
-        padding: 5px;
+        padding: 10px;
         margin: 5px;
     }
 
@@ -114,12 +143,12 @@ button:hover {
     }
 
     .calendar-day {
-        padding: 8px;
-        margin: 3px;
-        font-size: 0.9rem;
+        padding: 6px;
+        font-size: 0.8rem;
     }
-    input:nth-of-type(3) {
-        background-color: #e8f5e9;  /* Verde molto chiaro */
-        border-color: #81c784;      /* Bordo verde più scuro */
+
+    .saved-data {
+        font-size: 0.9rem;
+        padding: 8px;
     }
 }

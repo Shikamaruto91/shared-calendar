@@ -1,167 +1,109 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Gestione del login
-    const loginButton = document.getElementById("login-button");
-    const authorizedEmails = ["elisabetta093@live.it", "tonysgobio@gmail.com"];
+document.addEventListener('DOMContentLoaded', () => {
+    const loginButton = document.getElementById('login-button');
+    const emailInput = document.getElementById('email');
+    const loginSection = document.getElementById('login-section');
+    const calendarSection = document.getElementById('calendar-section');
+    const shiftsDiv = document.getElementById('shifts');
+    const calendarDiv = document.getElementById('calendar');
     
-    loginButton.addEventListener("click", function () {
-        const emailInput = document.getElementById("email").value;
-        const loginMessage = document.getElementById("login-message");
-        const calendarSection = document.getElementById("calendar-section");
-        const loginSection = document.getElementById("login-section");
+    let currentUser = null;
+    let selectedDate = null;
 
-        // Verifica l'email
-        if (authorizedEmails.includes(emailInput)) {
-            loginMessage.textContent = "Login effettuato con successo!";
-            loginMessage.style.color = "green";
-            loginSection.style.display = "none";
-            calendarSection.style.display = "block";
-            initializeCalendar();
-        } else {
-            loginMessage.textContent = "Email non autorizzata";
-            loginMessage.style.color = "red";
-        }
-    });
-});
-
-function initializeCalendar(year = 2025, month = 3) {
-    const calendarDiv = document.getElementById("calendar");
-    const giorni = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
-    const mesi = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 
-                 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
-
-    const totalDays = new Date(year, month + 1, 0).getDate();
-    
-    let calendarHTML = `
-        <div class="calendar-header">
-            <button id="prevMonth">&lt;</button>
-            <h3>${mesi[month]} ${year}</h3>
-            <button id="nextMonth">&gt;</button>
-        </div>
-        <table class="calendar-table">
-            <thead>
-                <tr>
-                    ${giorni.map(giorno => `<th>${giorno}</th>`).join('')}
-                </tr>
-            </thead>
-            <tbody>`;
-    
-    let firstDay = new Date(year, month, 1).getDay();
-    firstDay = firstDay === 0 ? 6 : firstDay - 1;
-    
-    let dayCount = 1;
-
-    for (let week = 0; week < 6; week++) {
-        calendarHTML += '<tr>';
-        for (let day = 0; day < 7; day++) {
-            if ((week === 0 && day < firstDay) || dayCount > totalDays) {
-                calendarHTML += '<td></td>';
-            } else {
-                calendarHTML += `
-                    <td class="calendar-cell" data-date="${year}-${month+1}-${dayCount}">
-                        <div class="date">${dayCount}</div>
-                        <div class="shift shift-type" contenteditable="true" placeholder="Tipo turno"></div>
-                        <div class="shift shift-location" contenteditable="true" placeholder="Luogo e ora"></div>
-                        <div class="shift-result"></div>
-                    </td>`;
-                dayCount++;
-            }
-        }
-        calendarHTML += '</tr>';
-        if (dayCount > totalDays) break;
-    }
-    
-    calendarHTML += `</tbody></table>`;
-    calendarDiv.innerHTML = calendarHTML;
-
-    document.getElementById('prevMonth').addEventListener('click', () => {
-        let newMonth = month - 1;
-        let newYear = year;
-        if (newMonth < 0) {
-            newMonth = 11;
-            newYear--;
-        }
-        if (newYear >= 2025) {
-            initializeCalendar(newYear, newMonth);
+    loginButton.addEventListener('click', () => {
+        const email = emailInput.value.trim();
+        if (email) {
+            currentUser = email;
+            loginSection.style.display = 'none';
+            calendarSection.style.display = 'block';
+            loadCalendar();
+            loadSavedData();
         }
     });
 
-    document.getElementById('nextMonth').addEventListener('click', () => {
-        let newMonth = month + 1;
-        let newYear = year;
-        if (newMonth > 11) {
-            newMonth = 0;
-            newYear++;
-        }
-        initializeCalendar(newYear, newMonth);
-    });
+    function loadCalendar() {
+        const days = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
+        const today = new Date();
+        const currentMonth = today.getMonth();
+        const currentYear = today.getFullYear();
 
-    document.querySelectorAll('.calendar-cell').forEach(cell => {
-        const typeDiv = cell.querySelector('.shift-type');
-        const locationDiv = cell.querySelector('.shift-location');
-        const resultDiv = cell.querySelector('.shift-result');
+        calendarDiv.innerHTML = '';
+        days.forEach(day => {
+            const dayHeader = document.createElement('div');
+            dayHeader.className = 'calendar-day header';
+            dayHeader.textContent = day;
+            calendarDiv.appendChild(dayHeader);
+        });
 
-        function updateResult() {
-            const type = typeDiv.textContent.trim().toLowerCase();
-            const location = locationDiv.textContent.trim().toUpperCase();
+        const firstDay = new Date(currentYear, currentMonth, 1);
+        const lastDay = new Date(currentYear, currentMonth + 1, 0);
 
-            // Se una delle due caselle è vuota, svuota anche il risultato
-            if (!type || !location) {
-                resultDiv.textContent = '';
-                return;
-            }
-
-            // Logica per determinare il risultato
-            if (type === 'mattino') {
-                if (location.includes('CASA 17.30')) {
-                    resultDiv.textContent = 'IMPEGNI DOPO LE 17.30';
-                } else if (location.includes('MILANO 17.30')) {
-                    resultDiv.textContent = 'IMPEGNI DOPO LE 18.45';
-                } else if (location.includes('MILANO 18')) {
-                    resultDiv.textContent = 'IMPEGNI DOPO LE 19.15';
-                } else if (location.includes('CASA 18')) {
-                    resultDiv.textContent = 'IMPEGNI DOPO LE 18.10';
-                } else {
-                    resultDiv.textContent = ''; // Se non corrisponde a nessuna condizione
-                }
-            } else if (type === 'pomeriggio') {
-                resultDiv.textContent = 'NESSUN IMPEGNO';
-            } else {
-                resultDiv.textContent = ''; // Se il tipo non è valido
-            }
-
-            // Salva i dati
-            saveShift(cell.dataset.date, {
-                type: type,
-                location: location,
-                result: resultDiv.textContent
-            });
-        }
-
-        typeDiv.addEventListener('input', updateResult);
-        locationDiv.addEventListener('input', updateResult);
-    });
-
-    loadSavedData();
-}
-
-function saveShift(date, shiftData) {
-    const shifts = JSON.parse(localStorage.getItem('shifts') || '{}');
-    shifts[date] = shiftData;
-    localStorage.setItem('shifts', JSON.stringify(shifts));
-}
-
-function loadSavedData() {
-    const shifts = JSON.parse(localStorage.getItem('shifts') || '{}');
-    document.querySelectorAll('.calendar-cell').forEach(cell => {
-        const date = cell.dataset.date;
-        if (shifts[date]) {
-            const typeDiv = cell.querySelector('.shift-type');
-            const locationDiv = cell.querySelector('.shift-location');
-            const resultDiv = cell.querySelector('.shift-result');
+        for (let i = 1; i <= lastDay.getDate(); i++) {
+            const date = new Date(currentYear, currentMonth, i);
+            const dayDiv = document.createElement('div');
+            dayDiv.className = 'calendar-day';
+            dayDiv.textContent = i;
+            dayDiv.dataset.date = date.toISOString().split('T')[0];
             
-            typeDiv.textContent = shifts[date].type;
-            locationDiv.textContent = shifts[date].location;
-            resultDiv.textContent = shifts[date].result;
+            dayDiv.addEventListener('click', () => selectDate(dayDiv));
+            calendarDiv.appendChild(dayDiv);
         }
-    });
-}
+    }
+
+    function selectDate(dayDiv) {
+        const previousSelected = document.querySelector('.calendar-day.selected');
+        if (previousSelected) {
+            previousSelected.classList.remove('selected');
+        }
+        dayDiv.classList.add('selected');
+        selectedDate = dayDiv.dataset.date;
+        
+        const savedData = getSavedData();
+        const dateData = savedData[selectedDate];
+        if (dateData) {
+            displaySavedData(selectedDate, dateData);
+        }
+    }
+
+    function getSavedData() {
+        const saved = localStorage.getItem(currentUser);
+        return saved ? JSON.parse(saved) : {};
+    }
+
+    function saveData(date, data) {
+        const saved = getSavedData();
+        saved[date] = data;
+        localStorage.setItem(currentUser, JSON.stringify(saved));
+        displaySavedData(date, data);
+    }
+
+    function displaySavedData(date, data) {
+        const existingData = document.querySelector(`[data-date="${date}"]`);
+        if (!existingData) {
+            const savedDiv = document.createElement('div');
+            savedDiv.className = 'saved-data';
+            savedDiv.dataset.date = date;
+            savedDiv.innerHTML = `
+                <span>${new Date(date).toLocaleDateString()} - ${data}</span>
+                <button class="delete-btn" onclick="deleteData('${date}')">×</button>
+            `;
+            shiftsDiv.appendChild(savedDiv);
+        }
+    }
+
+    window.deleteData = function(date) {
+        const saved = getSavedData();
+        delete saved[date];
+        localStorage.setItem(currentUser, JSON.stringify(saved));
+        const dataDiv = document.querySelector(`[data-date="${date}"]`);
+        if (dataDiv) {
+            dataDiv.remove();
+        }
+    }
+
+    function loadSavedData() {
+        const saved = getSavedData();
+        Object.entries(saved).forEach(([date, data]) => {
+            displaySavedData(date, data);
+        });
+    }
+});
