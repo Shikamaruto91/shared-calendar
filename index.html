@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#4CAF50">
     <title>CALENDARIO CONDIVISO</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
@@ -18,6 +19,12 @@
         </div>
         <div id="calendar-section" style="display: none;">
             <h2>Quando prendere impegni</h2>
+            <div class="input-group">
+                <input type="text" id="location" placeholder="Dove?" required>
+                <input type="time" id="time" required>
+                <input type="text" id="notes" placeholder="Note aggiuntive">
+                <button id="save-button">Salva</button>
+            </div>
             <div id="shifts"></div>
             <div id="calendar"></div>
         </div>

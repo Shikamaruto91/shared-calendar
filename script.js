@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const calendarSection = document.getElementById('calendar-section');
     const shiftsDiv = document.getElementById('shifts');
     const calendarDiv = document.getElementById('calendar');
+    const saveButton = document.getElementById('save-button');
+    const locationInput = document.getElementById('location');
+    const timeInput = document.getElementById('time');
+    const notesInput = document.getElementById('notes');
     
     let currentUser = null;
     let selectedDate = null;
@@ -17,6 +21,20 @@ document.addEventListener('DOMContentLoaded', () => {
             calendarSection.style.display = 'block';
             loadCalendar();
             loadSavedData();
+        }
+    });
+
+    saveButton.addEventListener('click', () => {
+        if (selectedDate && locationInput.value && timeInput.value) {
+            const data = {
+                location: locationInput.value,
+                time: timeInput.value,
+                notes: notesInput.value
+            };
+            saveData(selectedDate, data);
+            locationInput.value = '';
+            timeInput.value = '';
+            notesInput.value = '';
         }
     });
 
@@ -43,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
             dayDiv.className = 'calendar-day';
             dayDiv.textContent = i;
             dayDiv.dataset.date = date.toISOString().split('T')[0];
-            
             dayDiv.addEventListener('click', () => selectDate(dayDiv));
             calendarDiv.appendChild(dayDiv);
         }
@@ -56,12 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         dayDiv.classList.add('selected');
         selectedDate = dayDiv.dataset.date;
-        
-        const savedData = getSavedData();
-        const dateData = savedData[selectedDate];
-        if (dateData) {
-            displaySavedData(selectedDate, dateData);
-        }
     }
 
     function getSavedData() {
@@ -83,7 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
             savedDiv.className = 'saved-data';
             savedDiv.dataset.date = date;
             savedDiv.innerHTML = `
-                <span>${new Date(date).toLocaleDateString()} - ${data}</span>
+                <span>${new Date(date).toLocaleDateString()} - ${data.location} alle ${data.time}
+                ${data.notes ? `<br>Note: ${data.notes}` : ''}</span>
                 <button class="delete-btn" onclick="deleteData('${date}')">×</button>
             `;
             shiftsDiv.appendChild(savedDiv);

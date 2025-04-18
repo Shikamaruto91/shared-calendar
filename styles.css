@@ -33,6 +33,14 @@ h2 {
     color: #444;
 }
 
+.input-group {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
 input, button {
     width: 100%;
     padding: 12px;
@@ -44,6 +52,14 @@ input, button {
 input {
     border: 1px solid #ddd;
     background-color: #f8f8f8;
+}
+
+#time {
+    background-color: #f8f8f8;
+}
+
+#notes {
+    background-color: #e8f5e9;
 }
 
 button {
@@ -66,10 +82,6 @@ button:hover {
     margin-top: 20px;
 }
 
-#shifts {
-    margin: 20px 0;
-}
-
 .calendar-day {
     border: 1px solid #ddd;
     padding: 8px;
@@ -78,6 +90,7 @@ button:hover {
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s ease;
+    font-size: 0.9rem;
 }
 
 .calendar-day:hover {
@@ -90,6 +103,10 @@ button:hover {
     color: white;
     border-color: #45a049;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#shifts {
+    margin: 20px 0;
 }
 
 .saved-data {
