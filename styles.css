@@ -2,12 +2,14 @@
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
 }
+
 body {
     margin: 0;
     padding: 10px;
     font-family: Arial, sans-serif;
     -webkit-text-size-adjust: 100%;
 }
+
 .container {
     max-width: 800px;
     margin: 0 auto;
@@ -18,10 +20,11 @@ select, input, button {
     width: 100%;
     padding: 12px;
     margin: 5px 0;
-    font-size: 16px; /* Previene lo zoom su iOS */
+    font-size: 16px;
     border-radius: 4px;
     border: 1px solid #ddd;
 }
+
 button {
     background: #4CAF50;
     color: white;
@@ -29,6 +32,7 @@ button {
     cursor: pointer;
     touch-action: manipulation;
 }
+
 #calendario {
     margin-top: 20px;
     display: grid;
@@ -45,19 +49,25 @@ button {
     touch-action: manipulation;
 }
 
+.oggi {
+    background-color: #e8f5e9;
+    border: 2px solid #4CAF50;
+}
+
+.selezionato {
+    background: #4CAF50;
+    color: white;
+}
+
 .risultato-giorno {
-    font-size: 12px;
+    font-size: 11px;
     position: absolute;
     bottom: 2px;
     left: 0;
     right: 0;
     background: #f0f0f0;
     padding: 2px;
-}
-
-.selezionato {
-    background: #4CAF50;
-    color: white;
+    border-top: 1px solid #ddd;
 }
 
 #risultato {
@@ -66,7 +76,7 @@ button {
     background: #e8f5e9;
     border-radius: 4px;
 }
-/* Stili specifici per mobile */
+
 @media screen and (max-width: 600px) {
     body {
         padding: 5px;
