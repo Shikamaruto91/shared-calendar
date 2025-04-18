@@ -76,6 +76,16 @@ button {
     background: #e8f5e9;
     border-radius: 4px;
 }
+#calendar-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+#calendar-header button {
+    width: auto;
+    padding: 5px 10px;
+}
 
 @media screen and (max-width: 600px) {
     body {

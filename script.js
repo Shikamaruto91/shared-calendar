@@ -8,9 +8,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const risultatoDiv = document.getElementById('risultato');
     const salvaButton = document.getElementById('salva');
     const calendarioDiv = document.getElementById('calendario');
+    const prevMonthButton = document.getElementById('prev-month');
+    const nextMonthButton = document.getElementById('next-month');
+    const currentMonthSpan = document.getElementById('current-month');
 
     let giornoSelezionato = null;
     let utenteCorrente = null;
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
 
     // Login
     loginButton.addEventListener('click', () => {
@@ -19,9 +24,28 @@ document.addEventListener('DOMContentLoaded', () => {
             utenteCorrente = email;
             loginSection.style.display = 'none';
             calendarSection.style.display = 'block';
-            creaCalendario();
+            creaCalendario(currentMonth, currentYear);
             caricaDatiSalvati();
         }
+    });
+
+    // Gestione navigazione mesi
+    prevMonthButton.addEventListener('click', () => {
+        currentMonth--;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        }
+        creaCalendario(currentMonth, currentYear);
+    });
+
+    nextMonthButton.addEventListener('click', () => {
+        currentMonth++;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        creaCalendario(currentMonth, currentYear);
     });
 
     // Gestione selezioni e risultato
@@ -48,12 +72,13 @@ document.addEventListener('DOMContentLoaded', () => {
     luogoSelect.addEventListener('change', aggiornaRisultato);
 
     // Creazione calendario con date corrette
-    function creaCalendario() {
+    function creaCalendario(month, year) {
         const giorni = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
-        const oggi = new Date();
-        const primoGiorno = new Date(oggi.getFullYear(), oggi.getMonth(), 1);
-        const ultimoGiorno = new Date(oggi.getFullYear(), oggi.getMonth() + 1, 0).getDate();
+        const primoGiorno = new Date(year, month, 1);
+        const ultimoGiorno = new Date(year, month + 1, 0).getDate();
+        const nomeMese = new Date(year, month, 1).toLocaleString('default', { month: 'long' });
 
+        currentMonthSpan.textContent = `${nomeMese} ${year}`;
         calendarioDiv.innerHTML = '';
         
         // Intestazioni giorni
@@ -78,16 +103,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const div = document.createElement('div');
             div.className = 'giorno';
             div.textContent = i;
-            const data = new Date(oggi.getFullYear(), oggi.getMonth(), i);
+            const data = new Date(year, month, i);
             div.dataset.data = data.toISOString().split('T')[0];
             
-            if (i === oggi.getDate()) {
+            const oggi = new Date();
+            if (data.getDate() === oggi.getDate() && data.getMonth() === oggi.getMonth() && data.getFullYear() === oggi.getFullYear()) {
                 div.classList.add('oggi');
             }
 
             div.addEventListener('click', () => selezionaGiorno(div));
             calendarioDiv.appendChild(div);
         }
+
+        caricaDatiSalvati();
     }
 
     // Gestione salvataggio
@@ -106,11 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         salvaDati(giornoSelezionato.dataset.data, data);
         mostraRisultatoGiorno(giornoSelezionato, risultato);
-
-        // Reset campi
-        periodoSelect.value = '';
-        luogoSelect.value = '';
-        risultatoDiv.textContent = '';
     });
 
     function selezionaGiorno(div) {
