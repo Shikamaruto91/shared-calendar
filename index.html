@@ -20,9 +20,19 @@
         <div id="calendar-section" style="display: none;">
             <h2>Quando prendere impegni</h2>
             <div class="input-group">
-                <input type="text" id="location" placeholder="Dove?" required>
-                <input type="time" id="time" required>
-                <input type="text" id="notes" placeholder="Note aggiuntive">
+                <select id="location" required>
+                    <option value="">Seleziona orario</option>
+                    <option value="mattino">mattino</option>
+                    <option value="pomeriggio">pomeriggio</option>
+                </select>
+                <select id="time" required>
+                    <option value="">Seleziona luogo</option>
+                    <option value="milano18">milano18</option>
+                    <option value="milano17.30">milano17.30</option>
+                    <option value="casa18">casa18</option>
+                    <option value="casa17.30">casa17.30</option>
+                </select>
+                <input type="text" id="notes" placeholder="Risultato" readonly>
                 <button id="save-button">Salva</button>
             </div>
             <div id="shifts"></div>
