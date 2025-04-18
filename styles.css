@@ -43,6 +43,7 @@ input, button {
 
 input {
     border: 1px solid #ddd;
+    background-color: #f8f8f8;
 }
 
 button {
@@ -111,5 +112,9 @@ button:hover {
         padding: 8px;
         margin: 3px;
         font-size: 0.9rem;
+    }
+    input:nth-of-type(3) {
+        background-color: #e8f5e9;  /* Verde molto chiaro */
+        border-color: #81c784;      /* Bordo verde più scuro */
     }
 }
