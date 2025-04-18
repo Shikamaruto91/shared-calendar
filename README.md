@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Shared Calendar Project
 
 ## Overview
@@ -30,3 +31,25 @@ shared-calendar
 - Implement additional user accounts with different email addresses.
 - Add functionality for users to edit and update their shifts.
 - Enhance the calendar view with color coding for different types of shifts.
+=======
+# Calendario Condiviso
+
+Una web app per gestire un calendario condiviso.
+
+## Funzionalità
+- Login con email
+- Visualizzazione calendario
+- Gestione impegni
+- Versione PWA per mobile
+
+## Come utilizzare
+1. Visita l'applicazione web
+2. Effettua il login con email
+3. Gestisci i tuoi impegni
+
+## Tecnologie
+- HTML5
+- CSS3
+- JavaScript
+- Service Workers
+>>>>>>> 6e2fcff74aadb907b94fb302dc3e4fb30d590a16
