@@ -24,29 +24,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Gestione selezioni
-    periodoSelect.addEventListener('change', aggiornaRisultato);
-    luogoSelect.addEventListener('change', aggiornaRisultato);
-
+    // Gestione selezioni e risultato
     function aggiornaRisultato() {
         const periodo = periodoSelect.value;
         const luogo = luogoSelect.value;
-        
+        let risultato = '';
+
         if (periodo === 'pomeriggio') {
-            risultatoDiv.textContent = 'NON PRENDERE IMPEGNI';
+            risultato = 'NON PRENDERE IMPEGNI';
         } else if (periodo === 'mattino') {
-            if (luogo === 'casa17.30' || luogo === 'casa18') {
-                risultatoDiv.textContent = 'IMPEGNI DOPO LE 18';
-            } else if (luogo === 'milano17.30' || luogo === 'milano18') {
-                risultatoDiv.textContent = 'IMPEGNI DOPO LE 19';
+            if (luogo.includes('casa')) {
+                risultato = 'IMPEGNI DOPO LE 18';
+            } else if (luogo.includes('milano')) {
+                risultato = 'IMPEGNI DOPO LE 19';
             }
         }
+
+        risultatoDiv.textContent = risultato;
+        return risultato;
     }
 
-    // Creazione calendario
+    periodoSelect.addEventListener('change', aggiornaRisultato);
+    luogoSelect.addEventListener('change', aggiornaRisultato);
+
+    // Creazione calendario con date corrette
     function creaCalendario() {
         const giorni = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
         const oggi = new Date();
+        const primoGiorno = new Date(oggi.getFullYear(), oggi.getMonth(), 1);
         const ultimoGiorno = new Date(oggi.getFullYear(), oggi.getMonth() + 1, 0).getDate();
 
         calendarioDiv.innerHTML = '';
@@ -59,17 +64,54 @@ document.addEventListener('DOMContentLoaded', () => {
             calendarioDiv.appendChild(div);
         });
 
+        // Offset per iniziare dal giorno corretto
+        let offset = primoGiorno.getDay() - 1;
+        if (offset === -1) offset = 6; // Domenica
+
+        // Celle vuote per l'offset
+        for (let i = 0; i < offset; i++) {
+            calendarioDiv.appendChild(document.createElement('div'));
+        }
+
         // Giorni del mese
         for (let i = 1; i <= ultimoGiorno; i++) {
             const div = document.createElement('div');
             div.className = 'giorno';
             div.textContent = i;
-            div.dataset.data = `${oggi.getFullYear()}-${(oggi.getMonth() + 1).toString().padStart(2, '0')}-${i.toString().padStart(2, '0')}`;
+            const data = new Date(oggi.getFullYear(), oggi.getMonth(), i);
+            div.dataset.data = data.toISOString().split('T')[0];
             
+            if (i === oggi.getDate()) {
+                div.classList.add('oggi');
+            }
+
             div.addEventListener('click', () => selezionaGiorno(div));
             calendarioDiv.appendChild(div);
         }
     }
+
+    // Gestione salvataggio
+    salvaButton.addEventListener('click', () => {
+        if (!giornoSelezionato || !periodoSelect.value || !luogoSelect.value) {
+            alert('Seleziona un giorno e compila tutti i campi');
+            return;
+        }
+
+        const risultato = aggiornaRisultato();
+        const data = {
+            periodo: periodoSelect.value,
+            luogo: luogoSelect.value,
+            risultato: risultato
+        };
+
+        salvaDati(giornoSelezionato.dataset.data, data);
+        mostraRisultatoGiorno(giornoSelezionato, risultato);
+
+        // Reset campi
+        periodoSelect.value = '';
+        luogoSelect.value = '';
+        risultatoDiv.textContent = '';
+    });
 
     function selezionaGiorno(div) {
         if (giornoSelezionato) {
@@ -79,39 +121,10 @@ document.addEventListener('DOMContentLoaded', () => {
         giornoSelezionato = div;
     }
 
-    // Salvataggio dati
-    salvaButton.addEventListener('click', () => {
-        if (!giornoSelezionato || !periodoSelect.value || !luogoSelect.value) return;
-
-        const data = {
-            periodo: periodoSelect.value,
-            luogo: luogoSelect.value,
-            risultato: risultatoDiv.textContent
-        };
-
-        salvaDati(giornoSelezionato.dataset.data, data);
-        mostraRisultatoGiorno(giornoSelezionato, data.risultato);
-
-        // Reset campi
-        periodoSelect.value = '';
-        luogoSelect.value = '';
-        risultatoDiv.textContent = '';
-    });
-
     function salvaDati(data, dati) {
         let salvati = JSON.parse(localStorage.getItem(utenteCorrente) || '{}');
         salvati[data] = dati;
         localStorage.setItem(utenteCorrente, JSON.stringify(salvati));
-    }
-
-    function caricaDatiSalvati() {
-        const salvati = JSON.parse(localStorage.getItem(utenteCorrente) || '{}');
-        Object.entries(salvati).forEach(([data, dati]) => {
-            const giorno = document.querySelector(`[data-data="${data}"]`);
-            if (giorno) {
-                mostraRisultatoGiorno(giorno, dati.risultato);
-            }
-        });
     }
 
     function mostraRisultatoGiorno(giorno, risultato) {
@@ -122,5 +135,15 @@ document.addEventListener('DOMContentLoaded', () => {
             giorno.appendChild(risultatoDiv);
         }
         risultatoDiv.textContent = risultato;
+    }
+
+    function caricaDatiSalvati() {
+        const salvati = JSON.parse(localStorage.getItem(utenteCorrente) || '{}');
+        Object.entries(salvati).forEach(([data, dati]) => {
+            const giorno = document.querySelector(`[data-data="${data}"]`);
+            if (giorno) {
+                mostraRisultatoGiorno(giorno, dati.risultato);
+            }
+        });
     }
 });
