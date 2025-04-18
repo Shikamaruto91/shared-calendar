@@ -1,0 +1,13 @@
+{
+  "name": "Calendario Turni",
+  "short_name": "Calendario",
+  "start_url": "index.html",
+  "display": "standalone",    // Fa sembrare l'app più nativa
+  "background_color": "#fff", // Colore mentre carica
+  "theme_color": "#007BFF",   // Colore della barra in alto
+  "icons": [{                 // Icona che apparirà sul telefono
+    "src": "icon.png",
+    "sizes": "192x192",
+    "type": "image/png"
+  }]
+}

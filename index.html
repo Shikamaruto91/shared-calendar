@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CALENDARIO CONDIVISO</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <div class="container">
+        <h1>CALENDARIO CONDIVISO</h1>
+        <div id="login-section">
+            <h2>Login</h2>
+            <input type="email" id="email" placeholder="Enter your email" required>
+            <button id="login-button">Login</button>
+            <p id="login-message"></p>
+        </div>
+        <div id="calendar-section" style="display: none;">
+            <h2>Quando prendere impegni</h2>
+            <div id="shifts"></div>
+            <div id="calendar"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
