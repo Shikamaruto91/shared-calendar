@@ -1,184 +1,102 @@
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+    -webkit-tap-highlight-color: transparent;
 }
-
 body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
+    margin: 0;
     padding: 10px;
-    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+    -webkit-text-size-adjust: 100%;
 }
-
 .container {
     max-width: 800px;
     margin: 0 auto;
-    padding: 15px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 20px;
 }
 
-h1 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    text-align: center;
-    color: #333;
-}
-
-h2 {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    color: #444;
-}
-
-.input-group {
-    background-color: #fff;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-input, button {
+select, input, button {
     width: 100%;
     padding: 12px;
-    margin-bottom: 10px;
-    font-size: 1rem;
+    margin: 5px 0;
+    font-size: 16px; /* Previene lo zoom su iOS */
     border-radius: 4px;
-}
-
-input {
     border: 1px solid #ddd;
-    background-color: #f8f8f8;
 }
-
-#time {
-    background-color: #f8f8f8;
-}
-
-#notes {
-    background-color: #e8f5e9;
-}
-
 button {
-    background-color: #4CAF50;
+    background: #4CAF50;
     color: white;
     border: none;
     cursor: pointer;
-    transition: all 0.3s ease;
+    touch-action: manipulation;
 }
-
-button:hover {
-    background-color: #45a049;
-    transform: translateY(-1px);
-}
-
-#calendar {
+#calendario {
+    margin-top: 20px;
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
-    margin-top: 20px;
+    gap: 3px;
 }
 
-.calendar-day {
+.giorno {
+    border: 1px solid #ccc;
+    padding: 8px 4px;
+    text-align: center;
+    min-height: 50px;
     position: relative;
-    min-height: 60px;
-    padding-bottom: 25px;
+    touch-action: manipulation;
 }
 
-.day-result {
+.risultato-giorno {
+    font-size: 12px;
     position: absolute;
     bottom: 2px;
     left: 0;
     right: 0;
-    font-size: 0.7rem;
-    color: #666;
-    text-align: center;
+    background: #f0f0f0;
     padding: 2px;
-    background-color: #f8f8f8;
-    border-radius: 0 0 4px 4px;
 }
 
-select {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 10px;
-    font-size: 1rem;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    background-color: #f8f8f8;
+.selezionato {
+    background: #4CAF50;
+    color: white;
 }
 
-#notes {
-    background-color: #e8f5e9;
-    cursor: not-allowed;
-}
-
-
-
-#shifts {
-    margin: 20px 0;
-}
-
-.saved-data {
-    background-color: #e8f5e9;
+#risultato {
     padding: 10px;
-    margin: 5px 0;
+    margin: 10px 0;
+    background: #e8f5e9;
     border-radius: 4px;
-    border-left: 4px solid #4CAF50;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
-
-.delete-btn {
-    background: none;
-    border: none;
-    color: #666;
-    padding: 0 5px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    width: auto;
-}
-
-.delete-btn:hover {
-    color: #d32f2f;
-}
-
-#login-message {
-    color: #666;
-    margin-top: 10px;
-    text-align: center;
-}
-
+/* Stili specifici per mobile */
 @media screen and (max-width: 600px) {
+    body {
+        padding: 5px;
+    }
+
     .container {
-        padding: 10px;
-        margin: 5px;
+        padding: 5px;
     }
 
     h1 {
-        font-size: 1.2rem;
+        font-size: 1.5rem;
+        margin: 10px 0;
     }
 
     h2 {
-        font-size: 1rem;
+        font-size: 1.2rem;
     }
 
-    input, button {
-        padding: 8px;
-        font-size: 0.9rem;
+    .giorno {
+        font-size: 14px;
+        padding: 6px 2px;
+        min-height: 45px;
     }
 
-    .calendar-day {
-        padding: 6px;
-        font-size: 0.8rem;
+    select, input, button {
+        padding: 10px;
+        margin: 3px 0;
     }
 
-    .saved-data {
-        font-size: 0.9rem;
-        padding: 8px;
+    .risultato-giorno {
+        font-size: 10px;
     }
 }

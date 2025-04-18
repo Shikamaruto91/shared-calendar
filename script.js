@@ -1,79 +1,126 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // ...existing code...
+    const loginSection = document.getElementById('login-section');
+    const calendarSection = document.getElementById('calendar-section');
+    const loginButton = document.getElementById('login-button');
+    const emailInput = document.getElementById('email');
+    const periodoSelect = document.getElementById('periodo');
+    const luogoSelect = document.getElementById('luogo');
+    const risultatoDiv = document.getElementById('risultato');
+    const salvaButton = document.getElementById('salva');
+    const calendarioDiv = document.getElementById('calendario');
 
-    const locationSelect = document.getElementById('location');
-    const timeSelect = document.getElementById('time');
-    const notesInput = document.getElementById('notes');
+    let giornoSelezionato = null;
+    let utenteCorrente = null;
 
-    function updateNotes() {
-        const location = locationSelect.value;
-        const time = timeSelect.value;
+    // Login
+    loginButton.addEventListener('click', () => {
+        const email = emailInput.value.trim();
+        if (email) {
+            utenteCorrente = email;
+            loginSection.style.display = 'none';
+            calendarSection.style.display = 'block';
+            creaCalendario();
+            caricaDatiSalvati();
+        }
+    });
+
+    // Gestione selezioni
+    periodoSelect.addEventListener('change', aggiornaRisultato);
+    luogoSelect.addEventListener('change', aggiornaRisultato);
+
+    function aggiornaRisultato() {
+        const periodo = periodoSelect.value;
+        const luogo = luogoSelect.value;
         
-        if (location === 'mattino') {
-            if (time === 'casa17.30' || time === 'casa18') {
-                notesInput.value = 'IMPEGNI DOPO LE 18';
-            } else if (time === 'milano18' || time === 'milano17.30') {
-                notesInput.value = 'IMPEGNI DOPO LE 19';
-            } else {
-                notesInput.value = '';
+        if (periodo === 'pomeriggio') {
+            risultatoDiv.textContent = 'NON PRENDERE IMPEGNI';
+        } else if (periodo === 'mattino') {
+            if (luogo === 'casa17.30' || luogo === 'casa18') {
+                risultatoDiv.textContent = 'IMPEGNI DOPO LE 18';
+            } else if (luogo === 'milano17.30' || luogo === 'milano18') {
+                risultatoDiv.textContent = 'IMPEGNI DOPO LE 19';
             }
-        } else if (location === 'pomeriggio') {
-            notesInput.value = 'NON PRENDERE IMPEGNI';
-        } else {
-            notesInput.value = '';
         }
     }
 
-    locationSelect.addEventListener('change', updateNotes);
-    timeSelect.addEventListener('change', updateNotes);
+    // Creazione calendario
+    function creaCalendario() {
+        const giorni = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
+        const oggi = new Date();
+        const ultimoGiorno = new Date(oggi.getFullYear(), oggi.getMonth() + 1, 0).getDate();
 
-    function saveData(date, data) {
-        const saved = getSavedData();
-        // Verifica se la data è nel passato
-        const selectedDate = new Date(date);
-        const today = new Date();
+        calendarioDiv.innerHTML = '';
         
-        if (selectedDate.getMonth() < today.getMonth() && 
-            selectedDate.getFullYear() <= today.getFullYear()) {
-            return; // Non salvare date nel passato
-        }
-        
-        saved[date] = data;
-        localStorage.setItem(currentUser, JSON.stringify(saved));
-        displaySavedData(date, data);
-    }
+        // Intestazioni giorni
+        giorni.forEach(g => {
+            const div = document.createElement('div');
+            div.className = 'giorno header';
+            div.textContent = g;
+            calendarioDiv.appendChild(div);
+        });
 
-    function displaySavedData(date, data) {
-        const dayDiv = document.querySelector(`[data-date="${date}"]`);
-        if (dayDiv) {
-            const resultDiv = document.createElement('div');
-            resultDiv.className = 'day-result';
-            resultDiv.textContent = data.notes;
+        // Giorni del mese
+        for (let i = 1; i <= ultimoGiorno; i++) {
+            const div = document.createElement('div');
+            div.className = 'giorno';
+            div.textContent = i;
+            div.dataset.data = `${oggi.getFullYear()}-${(oggi.getMonth() + 1).toString().padStart(2, '0')}-${i.toString().padStart(2, '0')}`;
             
-            // Rimuovi risultati precedenti
-            const oldResult = dayDiv.querySelector('.day-result');
-            if (oldResult) oldResult.remove();
-            
-            dayDiv.appendChild(resultDiv);
+            div.addEventListener('click', () => selezionaGiorno(div));
+            calendarioDiv.appendChild(div);
         }
     }
 
-    // Pulizia automatica dati vecchi
-    function cleanOldData() {
-        const saved = getSavedData();
-        const today = new Date();
-        
-        Object.keys(saved).forEach(date => {
-            const savedDate = new Date(date);
-            if (savedDate.getMonth() < today.getMonth() && 
-                savedDate.getFullYear() <= today.getFullYear()) {
-                delete saved[date];
+    function selezionaGiorno(div) {
+        if (giornoSelezionato) {
+            giornoSelezionato.classList.remove('selezionato');
+        }
+        div.classList.add('selezionato');
+        giornoSelezionato = div;
+    }
+
+    // Salvataggio dati
+    salvaButton.addEventListener('click', () => {
+        if (!giornoSelezionato || !periodoSelect.value || !luogoSelect.value) return;
+
+        const data = {
+            periodo: periodoSelect.value,
+            luogo: luogoSelect.value,
+            risultato: risultatoDiv.textContent
+        };
+
+        salvaDati(giornoSelezionato.dataset.data, data);
+        mostraRisultatoGiorno(giornoSelezionato, data.risultato);
+
+        // Reset campi
+        periodoSelect.value = '';
+        luogoSelect.value = '';
+        risultatoDiv.textContent = '';
+    });
+
+    function salvaDati(data, dati) {
+        let salvati = JSON.parse(localStorage.getItem(utenteCorrente) || '{}');
+        salvati[data] = dati;
+        localStorage.setItem(utenteCorrente, JSON.stringify(salvati));
+    }
+
+    function caricaDatiSalvati() {
+        const salvati = JSON.parse(localStorage.getItem(utenteCorrente) || '{}');
+        Object.entries(salvati).forEach(([data, dati]) => {
+            const giorno = document.querySelector(`[data-data="${data}"]`);
+            if (giorno) {
+                mostraRisultatoGiorno(giorno, dati.risultato);
             }
         });
-        
-        localStorage.setItem(currentUser, JSON.stringify(saved));
     }
 
-    // Esegui pulizia all'avvio
-    cleanOldData();
+    function mostraRisultatoGiorno(giorno, risultato) {
+        let risultatoDiv = giorno.querySelector('.risultato-giorno');
+        if (!risultatoDiv) {
+            risultatoDiv = document.createElement('div');
+            risultatoDiv.className = 'risultato-giorno';
+            giorno.appendChild(risultatoDiv);
+        }
+        risultatoDiv.textContent = risultato;
+    }
 });
