@@ -87,6 +87,11 @@ button {
     padding: 5px 10px;
 }
 
+#cancella {
+    background: #f44336;
+    color: white;
+}
+
 @media screen and (max-width: 600px) {
     body {
         padding: 5px;

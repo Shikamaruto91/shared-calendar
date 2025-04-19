@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevMonthButton = document.getElementById('prev-month');
     const nextMonthButton = document.getElementById('next-month');
     const currentMonthSpan = document.getElementById('current-month');
+    const cancellaButton = document.getElementById('cancella');
 
     let giornoSelezionato = null;
     let utenteCorrente = null;
@@ -117,7 +118,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
         caricaDatiSalvati();
     }
+   // Gestione cancellazione
+   cancellaButton.addEventListener('click', () => {
+    if (!giornoSelezionato) {
+        alert('Seleziona un giorno da cancellare');
+        return;
+    }
 
+    cancellaDati(giornoSelezionato.dataset.data);
+    mostraRisultatoGiorno(giornoSelezionato, '');
+ // Reset campi
+ periodoSelect.value = '';
+ luogoSelect.value = '';
+ risultatoDiv.textContent = '';
+});
+
+function cancellaDati(data) {
+ let salvati = JSON.parse(localStorage.getItem(utenteCorrente) || '{}');
+ delete salvati[data];
+ localStorage.setItem(utenteCorrente, JSON.stringify(salvati));
+}
+
+function mostraRisultatoGiorno(giorno, risultato) {
+ let risultatoDiv = giorno.querySelector('.risultato-giorno');
+ if (risultatoDiv) {
+     risultatoDiv.textContent = risultato;
+ } else {
+     risultatoDiv = document.createElement('div');
+     risultatoDiv.className = 'risultato-giorno';
+     giorno.appendChild(risultatoDiv);
+ }
+ risultatoDiv.textContent = risultato;
+}
     // Gestione salvataggio
     salvaButton.addEventListener('click', () => {
         if (!giornoSelezionato || !periodoSelect.value || !luogoSelect.value) {
